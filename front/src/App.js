@@ -1,9 +1,10 @@
 import logo from "./logo.svg";
 import "./App.css";
-import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Container, Form, Row } from "react-bootstrap";
+
+import axs from './components/axs'
 
 function App() {
   const [somedata, setsomedata] = useState([]);
@@ -13,8 +14,8 @@ function App() {
   const clearForm = useRef('')
 
   const getSome = ()=>{
-    axios
-    .get("http://localhost:5000/some")
+    axs
+    .get("/some")
     .then((res) => setsomedata(res.data));
   }
   useEffect(() => {
@@ -23,7 +24,7 @@ function App() {
 
   const saveName = async (e) => {
     e.preventDefault()
-    await axios.post(`http://localhost:5000/some`, [name])
+    await axs.post(`/some`, [name])
     getSome()
     clearForm.current.value =''
   };
