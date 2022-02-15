@@ -1,0 +1,54 @@
+version: "3.5"
+services:
+
+  # backapp:
+  #   container_name: backapp
+  #   image: back-app
+  #   build: ./back     
+  #   depends_on:
+  #     - "postgres-db"
+  #   ports:
+  #     - "5000:5000"
+  #   volumes:
+  #     - ./back:/backapp
+  #   environment:
+  #     - PORT=5000
+
+  # frontapp:
+  #   container_name: frontapp
+  #   image: front-app
+  #   build:
+  #     context: ./front
+  #     dockerfile: ./Dockerfile
+  #   depends_on:
+  #     - "backapp"
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./front:/frontapp
+  #   environment:
+  #     - PORT=3000
+
+  postgres-db:
+    image: postgres:14-alpine
+    container_name: postgres-ws
+    environment:
+      POSTGRES_PASSWORD: 123
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    ports:
+      - "5432:5432"
+  # pgAdmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: pgadmin4
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: a@a.com
+  #     PGADMIN_DEFAULT_PASSWORD: adamiani
+  #   ports:
+  #     - "81:80"
+
+volumes:
+  back-folder:
+  postgres-data:
