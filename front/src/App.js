@@ -4,29 +4,33 @@ import { useEffect, useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Container, Form, Row } from "react-bootstrap";
 
-import axs from './components/axs'
+import axs from "./components/axs";
 
 function App() {
   const [somedata, setsomedata] = useState([]);
   const [name, setname] = useState("");
-  const [value, setvalue] = useState('')
+  const [value, setvalue] = useState("");
 
-  const clearForm = useRef('')
+  const clearForm = useRef("");
 
-  const getSome = ()=>{
-    axs
-    .get("/some")
-    .then((res) => setsomedata(res.data));
-  }
+  const getSome = () => {
+    axs.get("/some").then((res) => setsomedata(res.data));
+  };
   useEffect(() => {
     getSome();
   }, []);
+  const formData = {
+    name: name,
+    time: Date(),
+  };
 
   const saveName = async (e) => {
-    e.preventDefault()
-    await axs.post(`/some`, [name])
-    getSome()
-    clearForm.current.value =''
+    e.preventDefault();
+
+    await axs.post(`/some`, formData);
+    getSome();
+    clearForm.current.value = "";
+    setname("");
   };
 
   return (
@@ -39,15 +43,18 @@ function App() {
             ))}
           </ul>
 
-          <Form>
+          <Form onSubmit={saveName}>
             <Form.Control
               type="text"
               placeholder="Name"
               defaultValue={value}
               ref={clearForm}
+              required={true}
               onChange={(e) => setname(e.target.value)}
+              oninvalid="this.setCustomValidity('Enter Name Here')"
+              oninput="this.setCustomValidity('')"
             />
-            <Button variant="success" onClick={saveName}>
+            <Button variant="success" type="submit">
               შენახვა
             </Button>
           </Form>

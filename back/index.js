@@ -1,52 +1,58 @@
-const express = require('express');
-const app = express()
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const db = require('./db');
+const express = require("express");
+const app = express();
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const db = require("./db");
 
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 app.use(
-    bodyParser.urlencoded({
-      extended: false,
-    })
-  )
+  bodyParser.urlencoded({
+    extended: false,
+  })
+);
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 app.use(
-    bodyParser.urlencoded({
-        extended: true,
-    })
-)
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
-app.get('/', (req, res) => {
-    res.send('ok')
-})
+app.get("/", (req, res) => {
+  res.send("ok");
+});
 
-app.get('/some', async (req, res) => {
-   const response = await db.query('select * from users order by id')
-    res.json(response.rows)
-    console.log(response.rows);
-})
+app.get("/some", async (req, res) => {
+  const response = await db.query("select * from users order by id");
+  res.json(response.rows);
+});
+
+app.post("/some", async (req, res) => {
+  const postUser = [req.body.name];
+
+  try {
+    await db.query("insert into users (name) values  ($1)", postUser);
+    res.sendStatus(res.statusCode);
+  } catch (error) {
+    res.send(error.code);
+  }
+});
+app.put("/some/:id", async (req, res) => {
+  const putUser = [req.body.name];
 
 
-app.post('/some', async (req, res) => {
-
-    try {
-     await db.query('insert into users (name) values  ($1)', req.body )
-        res.json('ok')
-    } catch (error) {
-        res.json(error.message)
-    }
-         
- 
-})
-app.put('/some:id', (req, res) => {
-    console.log(req.params)
-
-    db.query(`update users set name=$1 where id=${req.params}`, Object.values(req.body )  )
+  try {
+    
+     await db.query(
+        `update users set name=$1 where id=${req.params.id}`,
+        putUser
+      )
+      res.sendStatus(res.statusCode)
    
-        res.json()
+  } catch (error) {
+    res.send(error.code)
+  }
  
-})
+});
 
-app.listen(5000, () => console.log('OK'))
+app.listen(5000, () => console.log("OK"));
