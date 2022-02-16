@@ -1,8 +1,8 @@
-FROM node:17 AS builder
+FROM node:16.14.0-alpine AS builder
 WORKDIR /frontapp
 COPY package.json .
 COPY . .
-RUN yarn
+RUN yarn install
 RUN yarn build
 
 FROM nginx:stable-alpine

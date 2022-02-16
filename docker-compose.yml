@@ -4,13 +4,15 @@ services:
   backapp:
     container_name: backapp
     image: back-app
-    build: ./back     
+    build:
+      context: ./back
+      dockerfile: ./Dockerfile     
     depends_on:
       - "postgres-db"
     ports:
       - "5000:5000"
     volumes:
-      - ./back:/backapp
+      - back-folder:/backapp
     environment:
       - PORT=5000
     
