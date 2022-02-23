@@ -8,10 +8,14 @@ import axs from "./components/axs";
 
 function App() {
   const [somedata, setsomedata] = useState([]);
-  const [name, setname] = useState("");
+  const [name, setname] = useState(null);
+  const [userName, setuserName] = useState(null);
+  const [userPass, setuserPass] = useState(null);
   const [value, setvalue] = useState("");
 
-  const clearForm = useRef("");
+  const clearName = useRef(null);
+  const clearUserName = useRef(null);
+  const clearUserPass = useRef(null);
 
   const getSome = () => {
     axs.get("/some").then((res) => setsomedata(res.data));
@@ -20,17 +24,28 @@ function App() {
     getSome();
   }, []);
   const formData = {
-    name: name,
-    time: Date(),
+    name,
+    userName,
+    userPass,
   };
 
   const saveName = async (e) => {
     e.preventDefault();
 
-    await axs.post(`/some`, formData);
+    const res = await axs.post(`/some`, formData);
+    if (res.data.code == 23505) {
+      alert(res.data.body)
+    }else if (res.data.code == 23502) {
+      alert(res.data.body)
+    }else{
     getSome();
-    clearForm.current.value = "";
-    setname("");
+    clearName.current.value = "";
+    clearUserName.current.value = "";
+    clearUserPass.current.value = "";
+    setname(null);
+    setuserName(null);
+    setuserPass(null);
+    }
   };
 
   return (
@@ -48,11 +63,27 @@ function App() {
               type="text"
               placeholder="Name"
               defaultValue={value}
-              ref={clearForm}
+              ref={clearName}
               required={true}
               onChange={(e) => setname(e.target.value)}
-              oninvalid="this.setCustomValidity('Enter Name Here')"
-              oninput="this.setCustomValidity('')"
+              // onInvalid="this.setCustomValidity('Enter Name Here')"
+              // onInput="this.setCustomValidity('')"
+            />
+            <Form.Control
+              type="text"
+              placeholder="User Name"
+              // defaultValue={value}
+              ref={clearUserName}
+              required={true}
+              onChange={(e) => setuserName(e.target.value)}
+            />
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              // defaultValue={value}
+              ref={clearUserPass}
+              required={true}
+              onChange={(e) => setuserPass(e.target.value)}
             />
             <Button variant="success" type="submit">
               შენახვა

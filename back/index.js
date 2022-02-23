@@ -28,13 +28,22 @@ app.get("/some", async (req, res) => {
 });
 
 app.post("/some", async (req, res) => {
-  const postUser = [req.body.name];
+ console.log(req.body);
 
   try {
-    await db.query("insert into users (name) values  ($1)", postUser);
+    const addUser = await db.query("insert into users (name, user_name, user_pass) values  ($1, $2, $3)", 
+    [req.body.name, req.body.userName, req.body.userPass]);
     res.sendStatus(res.statusCode);
+    console.log(addUser.command);
   } catch (error) {
-    res.send(error.code);
+    if (error.code ==23505) {
+      res.send({code:23505,body:"ჩანაწერი უკვე არსებობს"});
+    }
+    if (error.code == 23502) {
+      res.send({code:23502,body:"ვსეთ ყველა ველი"});
+    }
+    
+    console.log(error.code);
   }
 });
 app.put("/some/:id", async (req, res) => {
